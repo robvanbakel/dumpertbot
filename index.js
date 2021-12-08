@@ -9,6 +9,17 @@ const MINUTES_INTERVAL = 5
 
 let lastPubDate = new Date()
 
+const timestamp = () => {
+  return new Date().toLocaleString('nl-NL', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
+
 const getFeed = async (url) => {
   const res = await axios.get(url)
   const feed = htmlparser2.parseFeed(res.data)
@@ -27,7 +38,7 @@ const getNewPosts = async (feed) => {
 const tweetPosts = async (posts) => {
   for (const post of posts.reverse()) {
     await twitter.tweet(`${post.title} ${post.link}`)
-    console.log(`${new Date().toLocaleString('nl-NL')}: Tweeted: ${post.title}`)
+    console.log(`${timestamp()}: Tweeted: ${post.title}`)
   }
 }
 
@@ -38,7 +49,7 @@ const main = async () => {
   if (newPosts.length) {
     tweetPosts(newPosts)
   } else {
-    console.log(`${new Date().toLocaleString('nl-NL')}: No new posts found`)
+    console.log(`${timestamp()}: No new posts found`)
   }
 }
 
