@@ -4,11 +4,14 @@ const htmlparser2 = require('htmlparser2')
 const schedule = require('node-schedule')
 const twitter = require('./twitter.config')
 
+// Define constants
 const FEED_URL = 'https://api-live.dumpert.nl/mobile_api/json/rss'
 const MINUTES_INTERVAL = 5
 
+// When starting server, set last pubDate to current time
 let lastPubDate = new Date()
 
+// Function to create formatted timestamp
 const timestamp = () => {
   return new Date().toLocaleString('nl-NL', {
     day: '2-digit',
@@ -20,6 +23,7 @@ const timestamp = () => {
   })
 }
 
+// Get 50 most recent posts from RSS feed
 const getFeed = async (url) => {
   const res = await axios.get(url)
   const feed = htmlparser2.parseFeed(res.data)
@@ -27,6 +31,7 @@ const getFeed = async (url) => {
   return feed.items
 }
 
+// Filter out posts created after stored last pubDate, update stored last pubDate
 const getNewPosts = async (feed) => {
   const newPosts = feed.filter((post) => post.pubDate > lastPubDate)
 
@@ -35,6 +40,7 @@ const getNewPosts = async (feed) => {
   return newPosts
 }
 
+// Tweet new posts in reverse order (old to new)
 const tweetPosts = async (posts) => {
   for (const post of posts.reverse()) {
     await twitter.tweet(`${post.title} ${post.link}`)
@@ -42,6 +48,7 @@ const tweetPosts = async (posts) => {
   }
 }
 
+// Main function call
 const main = async () => {
   const feed = await getFeed(FEED_URL)
   const newPosts = await getNewPosts(feed)
@@ -53,4 +60,5 @@ const main = async () => {
   }
 }
 
+// Cron job to run main function every 5 minutes
 schedule.scheduleJob(`*/${MINUTES_INTERVAL} * * * *`, main)
