@@ -7,4 +7,4 @@ const { v2: twitter } = new TwitterApi({
   accessSecret: process.env.ACCESSSECRET,
 })
 
-module.exports = twitter
+export default twitter

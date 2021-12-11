@@ -2,7 +2,14 @@ require('dotenv').config()
 const axios = require('axios')
 const htmlparser2 = require('htmlparser2')
 const schedule = require('node-schedule')
-const twitter = require('./twitter.config')
+
+import twitter from './twitter.config'
+
+type Post = {
+  title: string;
+  link: string;
+  pubDate: Date
+};
 
 // Define constants
 const FEED_URL = 'https://api-live.dumpert.nl/mobile_api/json/rss'
@@ -24,7 +31,7 @@ const timestamp = () => {
 }
 
 // Get 50 most recent posts from RSS feed
-const getFeed = async (url) => {
+const getFeed = async (url: string) => {
   const res = await axios.get(url)
   const feed = htmlparser2.parseFeed(res.data)
 
@@ -32,7 +39,7 @@ const getFeed = async (url) => {
 }
 
 // Filter out posts created after stored last pubDate, update stored last pubDate
-const getNewPosts = async (feed) => {
+const getNewPosts = async (feed: Post[]) => {
   const newPosts = feed.filter((post) => post.pubDate > lastPubDate)
 
   lastPubDate = feed[0].pubDate
@@ -41,7 +48,7 @@ const getNewPosts = async (feed) => {
 }
 
 // Tweet new posts in reverse order (old to new)
-const tweetPosts = async (posts) => {
+const tweetPosts = async (posts: Post[]) => {
   for (const post of posts.reverse()) {
     await twitter.tweet(`${post.title} ${post.link}`)
     console.log(`${timestamp()}: Tweeted: ${post.title}`)
