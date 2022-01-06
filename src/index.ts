@@ -16,7 +16,7 @@ const FEED_URL = 'https://api-live.dumpert.nl/mobile_api/json/rss'
 const MINUTES_INTERVAL = 5
 
 // When starting server, set last pubDate to current time
-let lastPubDate = new Date()
+let lastPubDate: Date
 
 // Function to create formatted timestamp
 const timestamp = (timestamp: Date = new Date()) => {
@@ -36,6 +36,15 @@ const getFeed = async (url: string) => {
   const feed = htmlparser2.parseFeed(res.data)
 
   return feed.items
+}
+
+// Get last tweeted ID
+const getLastTweetedLink = async () => {
+  const lastTweet = await twitter.userTimeline('1295086337280876544')
+  const shortUrl = lastTweet._realData.data[0].text.split(' ').pop()
+  const fullUrl = await axios.get(shortUrl)
+
+  return fullUrl.request.socket._httpMessage.res.responseUrl
 }
 
 // Filter out posts created after stored last pubDate, update stored last pubDate
@@ -58,6 +67,27 @@ const tweetPosts = async (posts: Post[]) => {
 // Main function call
 const main = async () => {
   const feed = await getFeed(FEED_URL)
+
+  // If lastPubDate is not set, find pubDate of last tweeted post
+  if (!lastPubDate) {
+    const lastTweetedLink = await getLastTweetedLink()
+
+    feed.forEach((item: { link: String; pubDate: Date; title: String }) => {
+      if (item.link === lastTweetedLink) {
+        console.log(`Last tweeted item: ${timestamp(item.pubDate)}: ${item.title}`)
+        lastPubDate = item.pubDate
+        return
+      }
+    })
+
+    // If last tweeted post was not found, set lastPubDate to now
+    if(!lastPubDate) {
+      lastPubDate = new Date()
+      console.log(`Last tweeted item not found, starting at ${timestamp(lastPubDate)}`)
+    }
+
+  }
+
   const newPosts = await getNewPosts(feed)
 
   if (newPosts.length) {
