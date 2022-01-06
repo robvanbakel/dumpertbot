@@ -6,10 +6,10 @@ const schedule = require('node-schedule')
 import twitter from './twitter.config'
 
 type Post = {
-  title: string;
-  link: string;
+  title: string
+  link: string
   pubDate: Date
-};
+}
 
 // Define constants
 const FEED_URL = 'https://api-live.dumpert.nl/mobile_api/json/rss'
@@ -19,8 +19,8 @@ const MINUTES_INTERVAL = 5
 let lastPubDate = new Date()
 
 // Function to create formatted timestamp
-const timestamp = () => {
-  return new Date().toLocaleString('nl-NL', {
+const timestamp = (timestamp: Date = new Date()) => {
+  return timestamp.toLocaleString('nl-NL', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
