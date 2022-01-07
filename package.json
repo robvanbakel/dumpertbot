@@ -9,8 +9,11 @@
     "dev": "tsc -w" ,
     "devStart": "nodemon dist"
   },
-  "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Rob van Bakel",
+    "email": "robbakel@gmail.com",
+    "url": "https://robvanbakel.com"
+  },
   "license": "ISC",
   "dependencies": {
     "axios": "^0.24.0",
