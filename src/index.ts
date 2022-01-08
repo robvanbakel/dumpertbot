@@ -80,9 +80,9 @@ const main = async () => {
       }
     })
 
-    // If last tweeted post was not found, set lastPubDate to now
+    // If last tweeted post was not found, set lastPubDate to pubDate of last post
     if(!lastPubDate) {
-      lastPubDate = new Date()
+      lastPubDate = feed[0].pubDate
       console.log(`Last tweeted item not found, starting at ${timestamp(lastPubDate)}`)
     }
 
