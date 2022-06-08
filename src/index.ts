@@ -64,12 +64,12 @@ const getNewPosts = (feed: Post[]) => {
 
 // Tweet new posts in reverse order (old to new)
 const tweetPosts = async (posts: Post[]): Promise<void> => {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const post of posts.reverse()) {
-    // eslint-disable-next-line no-await-in-loop
+  posts.reverse().reduce(async (promise, post) => {
+    await promise;
+
     await twitter.tweet(`${post.title} ${post.link}`);
-    console.log(`${getTimestamp()}: Tweeted: ${post.title}`);
-  }
+    console.log(`${getTimestamp()}: ${post.title}`);
+  }, Promise.resolve());
 };
 
 // Main function call
