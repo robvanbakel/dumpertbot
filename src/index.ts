@@ -40,10 +40,17 @@ const getLastTweetedLink = async (): Promise<string> => {
   const lastTweet = await twitter.userTimeline(TWITTER_ID);
   // eslint-disable-next-line no-underscore-dangle
   const shortUrl = lastTweet._realData.data[0].text.split(' ').pop();
-  const fullUrl = await axios.get(shortUrl);
 
-  // eslint-disable-next-line no-underscore-dangle
-  return fullUrl.request.socket._httpMessage.res.responseUrl;
+  let fullUrl: string;
+
+  try {
+    const axiosResponse = await axios.get(shortUrl);
+    fullUrl = axiosResponse.request.res.responseUrl;
+  } catch (error: any) {
+    fullUrl = error.request.res.responseUrl;
+  }
+
+  return fullUrl;
 };
 
 // Filter out posts created after stored last pubDate, update stored last pubDate
@@ -60,7 +67,7 @@ const tweetPosts = async (posts: Post[]): Promise<void> => {
   // eslint-disable-next-line no-restricted-syntax
   for (const post of posts.reverse()) {
     // eslint-disable-next-line no-await-in-loop
-    // await twitter.tweet(`${post.title} ${post.link}`);
+    await twitter.tweet(`${post.title} ${post.link}`);
     console.log(`${getTimestamp()}: Tweeted: ${post.title}`);
   }
 };
