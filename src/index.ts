@@ -3,6 +3,7 @@ import twitter from './twitter.config';
 const axios = require('axios');
 const htmlparser2 = require('htmlparser2');
 const schedule = require('node-schedule');
+const { decode } = require('html-entities');
 
 interface Post {
   title: string
@@ -67,7 +68,7 @@ const tweetPosts = async (posts: Post[]): Promise<void> => {
   posts.reverse().reduce(async (promise, post) => {
     await promise;
 
-    await twitter.tweet(`${post.title} ${post.link}`);
+    await twitter.tweet(`${decode(post.title)} ${post.link}`);
     console.log(`${getTimestamp()}: ${post.title}`);
   }, Promise.resolve());
 };
