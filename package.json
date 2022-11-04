@@ -5,7 +5,7 @@
   "main": "dist",
   "scripts": {
     "build": "tsc -p .",
-    "prestart": "npm run build",
+    "prestart": "yarn run build",
     "start": "node dist",
     "dev": "tsc -w & nodemon dist"
   },
