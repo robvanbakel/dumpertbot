@@ -1,9 +1,9 @@
-import twitter from './twitter.config';
+import axios from 'axios';
+import schedule from 'node-schedule';
+import { decode } from 'html-entities';
+import * as htmlparser2 from 'htmlparser2';
 
-const axios = require('axios');
-const htmlparser2 = require('htmlparser2');
-const schedule = require('node-schedule');
-const { decode } = require('html-entities');
+import twitter from './twitter.config';
 
 interface Post {
   title: string
@@ -33,7 +33,7 @@ const getFeed = async (url: string): Promise<Post[]> => {
   const res = await axios.get(url);
   const feed = htmlparser2.parseFeed(res.data);
 
-  return feed.items;
+  return feed?.items as Post[];
 };
 
 // Get last tweeted ID
