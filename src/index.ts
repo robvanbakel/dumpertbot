@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
 import schedule from 'node-schedule';
 import { decode } from 'html-entities';
 import * as htmlparser2 from 'htmlparser2';
@@ -19,14 +20,7 @@ const MINUTES_INTERVAL = 5;
 let lastPubDate: Date;
 
 // Function to create formatted timestamp
-const getTimestamp = (timestamp: Date = new Date()) => timestamp.toLocaleString('nl-NL', {
-  day: '2-digit',
-  month: '2-digit',
-  year: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-});
+const getTimestamp = (timestamp?: Date) => dayjs(timestamp).format('DD-MM-YYYY HH:mm:ss');
 
 // Get 50 most recent posts from RSS feed
 const getFeed = async (url: string): Promise<Post[]> => {
