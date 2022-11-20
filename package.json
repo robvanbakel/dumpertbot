@@ -7,7 +7,8 @@
     "build": "tsc -p .",
     "prestart": "yarn run build",
     "start": "node dist",
-    "dev": "tsc -w & nodemon dist"
+    "dev": "tsc -w & nodemon dist",
+    "lint": "eslint ."
   },
   "author": {
     "name": "Rob van Bakel",
