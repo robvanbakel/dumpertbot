@@ -1,6 +1,8 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
 
-const { TwitterApi } = require('twitter-api-v2');
+import { TwitterApi } from 'twitter-api-v2';
+
+dotenv.config();
 
 const { v2: twitter } = new TwitterApi({
   appKey: process.env.APPKEY,
