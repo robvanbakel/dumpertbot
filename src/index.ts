@@ -32,9 +32,9 @@ const getFeed = async (url: string): Promise<Post[]> => {
 
 // Get last tweeted ID
 const getLastTweetedLink = async (): Promise<string> => {
-  const lastTweet = await twitter.userTimeline(TWITTER_ID);
-  // eslint-disable-next-line no-underscore-dangle
-  const shortUrl = lastTweet._realData.data[0].text.split(' ').pop();
+  const timeline = await twitter.userTimeline(TWITTER_ID);
+
+  const shortUrl = timeline.data.data[0].text.split(' ').pop() as string;
 
   let fullUrl: string;
 
