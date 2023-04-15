@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import schedule from 'node-schedule';
 import { decode } from 'html-entities';
@@ -31,7 +31,7 @@ const getFeed = async (url: string): Promise<Post[]> => {
 };
 
 // Get last tweeted ID
-const getLastTweetedLink = async (): Promise<string> => {
+const getLastTweetedLink = async (): Promise<string | null> => {
   const timeline = await twitter.userTimeline(TWITTER_ID);
 
   const shortUrl = timeline.data.data[0].text.split(' ').pop() as string;
@@ -41,7 +41,8 @@ const getLastTweetedLink = async (): Promise<string> => {
   try {
     const axiosResponse = await axios.get(shortUrl);
     fullUrl = axiosResponse.request.res.responseUrl;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (!(error instanceof AxiosError)) return null;
     fullUrl = error.request.res.responseUrl;
   }
 
@@ -74,6 +75,8 @@ const main = async (): Promise<void> => {
   // If lastPubDate is not set, find pubDate of last tweeted post
   if (!lastPubDate) {
     const lastTweetedLink = await getLastTweetedLink();
+
+    if (!lastTweetedLink) return;
 
     feed.forEach((item: Post) => {
       if (item.link === lastTweetedLink) {
